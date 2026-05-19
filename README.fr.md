@@ -122,14 +122,43 @@ Le **signe Peace ✌️** est validé quand :
 
 ## Configuration
 
-Tous les paramètres ajustables sont en haut de [main.py](main.py) :
+Tous les paramètres ajustables sont en haut de [main.py](main.py). Si les détections semblent imprécises, commence par les seuils EAR des expressions.
+
+### Général
 
 | Constante | Valeur par défaut | Description |
 |---|---|---|
-| `MIN_DETECTION_CONFIDENCE` | `0.7` | Confiance minimale pour détecter une main |
-| `MIN_TRACKING_CONFIDENCE` | `0.6` | Confiance minimale pour continuer le tracking |
+| `CONFIRM_FRAMES` | `5` | Nombre de frames consécutives où la pose doit être tenue avant déclenchement — augmenter si trop sensible, réduire si lent |
 | `DISPLAY_HOLD_FRAMES` | `15` | Frames où le mème reste affiché après la fin du geste |
-| `MEME_FILENAME` | `hamster.png` | Fichier PNG à incruster |
+| `MIN_HAND_CONFIDENCE` | `0.7` | Confiance minimale pour détecter une main |
+| `MIN_TRACK_CONFIDENCE` | `0.6` | Confiance minimale pour continuer le tracking |
+| `MIN_FACE_CONFIDENCE` | `0.5` | Confiance minimale pour détecter un visage |
+
+### Expressions faciales — EAR (Eye Aspect Ratio)
+
+L'EAR mesure l'ouverture d'un œil : `hauteur verticale / largeur horizontale`. Un œil fermé vaut environ `0.0` ; un œil normalement ouvert se situe entre `0.25` et `0.35`. **Ces valeurs varient beaucoup d'une personne à l'autre** — quelqu'un avec de grands yeux naturels aura un EAR au repos plus élevé que la moyenne.
+
+> **Comment calibrer :** ajoute un `print(ear_l, ear_r)` dans `is_squinting()` et observe la console en faisant chaque expression. Utilise ces valeurs pour régler tes seuils.
+
+| Constante | Valeur par défaut | Ce qu'elle contrôle |
+|---|---|---|
+| `SQUINT_EAR_MIN` | `0.12` | Borne basse du plissement — en dessous, l'œil est considéré fermé (zone clignement) |
+| `SQUINT_EAR_MAX` | `0.22` | Borne haute du plissement — au-dessus, l'œil est considéré normalement ouvert |
+| `WINK_EAR_CLOSED` | `0.10` | Un œil doit être en dessous de ce seuil pour valider un clin d'œil |
+| `WINK_EAR_OPEN` | `0.20` | L'autre œil doit dépasser ce seuil pour confirmer qu'il est ouvert |
+| `WIDE_EAR_MIN` | `0.48` | Les deux yeux doivent dépasser ce seuil pour déclencher « gros yeux » — **à augmenter si ça se déclenche au repos** |
+
+**Exemple — grands yeux naturels :** si ton EAR au repos tourne autour de `0.38`, passe `WIDE_EAR_MIN` à `0.52` pour que seul un air vraiment surpris déclenche l'expression.
+
+**Exemple — yeux petits / en amande :** si le plissement ne se déclenche jamais, baisse `SQUINT_EAR_MAX` de `0.22` à `0.18`.
+
+### Gestes de mouvement
+
+| Constante | Valeur par défaut | Description |
+|---|---|---|
+| `WAVE_MIN_DELTA` | `0.10` | Déplacement vertical minimal de chaque main pour valider une vague |
+| `SCUBA_MIN_X_RANGE` | `0.20` | Déplacement horizontal minimal de la main qui ondule pour le scuba |
+| `SCUBA_PINCH_MAX_DIST` | `0.09` | Distance 3D maximale pouce–index pour valider un pincement |
 
 ---
 

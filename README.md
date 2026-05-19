@@ -132,14 +132,43 @@ The **peace sign ✌️** is validated when:
 
 ## Configuration
 
-All tunable parameters are at the top of [main.py](main.py):
+All tunable parameters are at the top of [main.py](main.py). If detections feel off, start with the face EAR thresholds.
+
+### General
 
 | Constant | Default | Description |
 |---|---|---|
-| `MIN_DETECTION_CONFIDENCE` | `0.7` | Minimum confidence to detect a hand |
-| `MIN_TRACKING_CONFIDENCE` | `0.6` | Minimum confidence to keep tracking |
-| `DISPLAY_HOLD_FRAMES` | `15` | Frames to keep the meme visible after the gesture ends |
-| `MEME_FILENAME` | `hamster.png` | PNG file to overlay |
+| `CONFIRM_FRAMES` | `5` | Consecutive frames a pose must be held before triggering — raise if too sensitive, lower if sluggish |
+| `DISPLAY_HOLD_FRAMES` | `15` | Frames the meme stays visible after the gesture ends |
+| `MIN_HAND_CONFIDENCE` | `0.7` | Minimum confidence to detect a hand |
+| `MIN_TRACK_CONFIDENCE` | `0.6` | Minimum confidence to keep tracking a hand |
+| `MIN_FACE_CONFIDENCE` | `0.5` | Minimum confidence to detect a face |
+
+### Face expressions — EAR (Eye Aspect Ratio)
+
+EAR measures how open an eye is: `vertical height / horizontal width`. A fully closed eye is near `0.0`; a wide-open eye is typically `0.25–0.35`. **These values vary a lot between people** — someone with naturally large eyes will have a higher resting EAR than average.
+
+> **How to calibrate:** add a `print(ear_l, ear_r)` call inside `is_squinting()` and watch the console while you hold each expression. Use those values to set your thresholds.
+
+| Constant | Default | What it controls |
+|---|---|---|
+| `SQUINT_EAR_MIN` | `0.12` | Lower bound of squint — below this the eye is considered closed (wink zone) |
+| `SQUINT_EAR_MAX` | `0.22` | Upper bound of squint — above this the eye is considered normal/open |
+| `WINK_EAR_CLOSED` | `0.10` | One eye must be below this to count as closed for a wink |
+| `WINK_EAR_OPEN` | `0.20` | The other eye must be above this to confirm it is open during a wink |
+| `WIDE_EAR_MIN` | `0.48` | Both eyes must exceed this to trigger "wide eyes" — **raise this if it triggers at rest** |
+
+**Example — naturally large eyes:** if your resting EAR is around `0.38`, set `WIDE_EAR_MIN = 0.52` so only a deliberate surprised look triggers it.
+
+**Example — small/narrow eyes:** if squinting never triggers, lower `SQUINT_EAR_MAX` from `0.22` to `0.18`.
+
+### Motion gestures
+
+| Constant | Default | Description |
+|---|---|---|
+| `WAVE_MIN_DELTA` | `0.10` | Minimum vertical displacement each hand must travel for a wave |
+| `SCUBA_MIN_X_RANGE` | `0.20` | Minimum horizontal travel of the waving hand for scuba |
+| `SCUBA_PINCH_MAX_DIST` | `0.09` | Maximum 3D distance between thumb and index to count as a pinch |
 
 ---
 

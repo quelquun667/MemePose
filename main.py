@@ -69,7 +69,7 @@ SQUINT_EAR_MAX = 0.22
 WINK_EAR_CLOSED = 0.10   # eye considered closed
 WINK_EAR_OPEN   = 0.20   # other eye considered open
 
-WIDE_EAR_MIN = 0.40      # both eyes wide open above this
+WIDE_EAR_MIN = 0.48      # both eyes wide open above this
 
 # ---------------------------------------------------------------------------
 # Hand landmark indices
