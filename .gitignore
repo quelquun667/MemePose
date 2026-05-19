@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MediaPipe models (downloaded at runtime)
+assets/hand_landmarker.task
+assets/face_landmarker.task
+
+# Release artifacts
+*.zip
+*.tar.gz
+*.whl
+
+# Custom meme assets you don't want to share
+# assets/gestures/
+# assets/expressions/

@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          CURRENT_TAG="${GITHUB_REF_NAME}"
+          PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || true)
+
+          if [ -n "$PREV_TAG" ]; then
+            LOG=$(git log "${PREV_TAG}..${CURRENT_TAG}" --pretty=format:"- %s" --no-merges)
+          else
+            LOG=$(git log --pretty=format:"- %s" --no-merges)
+          fi
+
+          {
+            echo "CHANGELOG<<EOF"
+            echo "$LOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: |
+            ## Changes
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
